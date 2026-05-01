@@ -47,17 +47,20 @@ export default async function HomePage() {
   let totalPosts = 0;
   let totalProducts = 0;
   try {
-    const [p, pr, b, sh] = await Promise.all([
+    const [p, prAll, prFeatured, b, sh] = await Promise.all([
       serverFetch<{ profile: Profile | null }>('/api/profile'),
+      serverFetch<{ projects: Project[] }>('/api/projects'),
       serverFetch<{ projects: Project[] }>('/api/projects?featured=true'),
       serverFetch<{ posts: BlogPost[] }>('/api/blog'),
       serverFetch<{ products: Product[] }>('/api/products'),
     ]);
     profile = p.profile;
-    totalProjects = pr.projects.length;
+    totalProjects = prAll.projects.length;
     totalPosts = b.posts.length;
     totalProducts = sh.products.length;
-    projects = pr.projects.slice(0, 3);
+    const featuredProjects =
+      prFeatured.projects.length > 0 ? prFeatured.projects : prAll.projects;
+    projects = featuredProjects.slice(0, 3);
     posts = b.posts.slice(0, 3);
     products = sh.products.slice(0, 3);
   } catch {
