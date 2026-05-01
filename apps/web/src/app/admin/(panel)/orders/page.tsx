@@ -36,6 +36,7 @@ export default function AdminOrdersPage() {
               <tr className="text-left border-b border-[hsl(var(--border))]">
                 <th className="py-2">Date</th>
                 <th>Email</th>
+                <th>Phone</th>
                 <th>Items</th>
                 <th>Total</th>
                 <th>Status</th>
@@ -46,7 +47,20 @@ export default function AdminOrdersPage() {
               {orders.map((o) => (
                 <tr key={o.id} className="border-b border-[hsl(var(--border))]">
                   <td className="py-2">{new Date(o.createdAt).toLocaleDateString()}</td>
-                  <td>{o.email}</td>
+                  <td>
+                    <a className="underline" href={`mailto:${o.email}`}>
+                      {o.email}
+                    </a>
+                  </td>
+                  <td className="font-mono text-xs">
+                    {o.customerPhone ? (
+                      <a className="underline" href={`tel:${o.customerPhone}`}>
+                        {o.customerPhone}
+                      </a>
+                    ) : (
+                      <span className="text-[hsl(var(--muted-foreground))]">—</span>
+                    )}
+                  </td>
                   <td>
                     {o.items.map((it) => (
                       <span key={it.id} className="block text-xs">

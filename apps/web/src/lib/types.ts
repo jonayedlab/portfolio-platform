@@ -109,11 +109,28 @@ export interface BlogPost {
 export interface Order {
   id: string;
   email: string;
+  customerPhone?: string | null;
   totalCents: number;
   currency: string;
   status: 'PENDING' | 'PAID' | 'FAILED' | 'REFUNDED';
   items: { id: string; productId: string; priceCents: number; quantity: number; product?: Product }[];
   createdAt: string;
+}
+
+export type ProductRequestStatus = 'NEW' | 'IN_REVIEW' | 'ACCEPTED' | 'REJECTED' | 'DONE';
+
+export interface ProductRequest {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  title: string;
+  description: string;
+  budget?: string | null;
+  status: ProductRequestStatus;
+  adminNote?: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface AnalyticsSummary {
