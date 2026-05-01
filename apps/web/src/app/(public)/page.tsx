@@ -43,6 +43,9 @@ export default async function HomePage() {
   let projects: Project[] = [];
   let posts: BlogPost[] = [];
   let products: Product[] = [];
+  let totalProjects = 0;
+  let totalPosts = 0;
+  let totalProducts = 0;
   try {
     const [p, pr, b, sh] = await Promise.all([
       serverFetch<{ profile: Profile | null }>('/api/profile'),
@@ -51,6 +54,9 @@ export default async function HomePage() {
       serverFetch<{ products: Product[] }>('/api/products'),
     ]);
     profile = p.profile;
+    totalProjects = pr.projects.length;
+    totalPosts = b.posts.length;
+    totalProducts = sh.products.length;
     projects = pr.projects.slice(0, 3);
     posts = b.posts.slice(0, 3);
     products = sh.products.slice(0, 3);
@@ -71,9 +77,9 @@ export default async function HomePage() {
     .toUpperCase();
 
   const stats = [
-    { value: projects.length || '—', label: 'Featured projects' },
-    { value: posts.length || '—', label: 'Recent posts' },
-    { value: products.length || '—', label: 'Digital products' },
+    { value: totalProjects || '—', label: 'Projects shipped' },
+    { value: totalPosts || '—', label: 'Posts written' },
+    { value: totalProducts || '—', label: 'Digital products' },
     { value: '24h', label: 'Reply window' },
   ];
 
@@ -162,8 +168,8 @@ export default async function HomePage() {
 
                 <div className="mt-6 grid grid-cols-3 gap-3 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/50 p-3">
                   {[
-                    { label: 'Projects', value: projects.length || 6 },
-                    { label: 'Posts', value: posts.length || 12 },
+                    { label: 'Projects', value: totalProjects || '—' },
+                    { label: 'Posts', value: totalPosts || '—' },
                     { label: 'Years', value: '5+' },
                   ].map((s) => (
                     <div key={s.label} className="text-center">
