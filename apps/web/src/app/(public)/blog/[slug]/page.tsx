@@ -1,7 +1,9 @@
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import { serverFetch } from '@/lib/api';
 import type { BlogPost } from '@/lib/types';
 import { formatDate } from '@/lib/utils';
+import { ArrowLeft } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,28 +45,62 @@ export default async function PostPage({ params }: { params: { slug: string } })
   };
 
   return (
-    <article className="max-w-3xl">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <header className="mb-6">
-        <h1 className="text-3xl font-bold">{post.title}</h1>
-        <p className="mt-2 text-sm text-[hsl(var(--muted-foreground))]">
-          {formatDate(post.publishedAt ?? post.createdAt)}
-          {post.author?.name && <span> · {post.author.name}</span>}
-        </p>
-      </header>
-      <div className="prose-blog whitespace-pre-line">{post.content}</div>
-      {post.tags.length > 0 && (
-        <div className="mt-8 flex flex-wrap gap-1">
-          {post.tags.map((t) => (
-            <span key={t} className="text-xs rounded bg-[hsl(var(--muted))] px-2 py-0.5">
-              #{t}
-            </span>
-          ))}
+    <>
+      <section className="relative overflow-hidden border-b border-[hsl(var(--border))]/60 bg-radial-fade">
+        <div className="hero-grid absolute inset-0 opacity-50" aria-hidden />
+        <div className="container-page relative py-12 sm:py-16">
+          <Link href="/blog" className="btn-link mb-6 inline-flex">
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Back to blog
+          </Link>
+          <span className="eyebrow">
+            {formatDate(post.publishedAt ?? post.createdAt)}
+            {post.category && <span> · {post.category.name}</span>}
+          </span>
+          <h1 className="display-heading mt-4 text-3xl sm:text-5xl text-balance">
+            {post.title}
+          </h1>
+          {post.excerpt && (
+            <p className="mt-4 max-w-2xl text-lg text-[hsl(var(--muted-foreground))]">
+              {post.excerpt}
+            </p>
+          )}
+          {post.author?.name && (
+            <p className="mt-4 text-sm text-[hsl(var(--muted-foreground))]">
+              By <span className="text-[hsl(var(--foreground))]">{post.author.name}</span>
+            </p>
+          )}
         </div>
-      )}
-    </article>
+      </section>
+
+      <section className="container-page py-16">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        {post.coverImageUrl && (
+          <div className="surface mb-10 overflow-hidden p-0">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={post.coverImageUrl}
+              alt={post.title}
+              className="w-full object-cover"
+            />
+          </div>
+        )}
+        <article className="prose-blog mx-auto max-w-3xl whitespace-pre-line">
+          {post.content}
+        </article>
+        {post.tags.length > 0 && (
+          <div className="mx-auto mt-10 flex max-w-3xl flex-wrap gap-1.5">
+            {post.tags.map((t) => (
+              <span key={t} className="chip">
+                #{t}
+              </span>
+            ))}
+          </div>
+        )}
+      </section>
+    </>
   );
 }

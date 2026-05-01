@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import { serverFetch } from '@/lib/api';
 import type { Project } from '@/lib/types';
+import { ArrowLeft, ExternalLink, Github } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,31 +25,71 @@ export default async function ProjectPage({ params }: { params: { slug: string }
   if (!project) notFound();
 
   return (
-    <article className="max-w-3xl">
-      <h1 className="text-3xl font-bold">{project.title}</h1>
-      <p className="mt-2 text-[hsl(var(--muted-foreground))]">{project.summary}</p>
-      {project.techStack.length > 0 && (
-        <div className="mt-4 flex flex-wrap gap-1">
-          {project.techStack.map((t) => (
-            <span key={t} className="text-xs rounded bg-[hsl(var(--muted))] px-2 py-0.5">
-              {t}
-            </span>
-          ))}
+    <>
+      <section className="relative overflow-hidden border-b border-[hsl(var(--border))]/60 bg-radial-fade">
+        <div className="hero-grid absolute inset-0 opacity-50" aria-hidden />
+        <div className="container-page relative py-12 sm:py-16">
+          <Link href="/projects" className="btn-link mb-6 inline-flex">
+            <ArrowLeft className="h-3.5 w-3.5" />
+            All projects
+          </Link>
+          <span className="eyebrow">Project</span>
+          <h1 className="display-heading mt-4 text-3xl sm:text-5xl text-balance">
+            {project.title}
+          </h1>
+          <p className="mt-4 max-w-2xl text-lg text-[hsl(var(--muted-foreground))]">
+            {project.summary}
+          </p>
+          {project.techStack.length > 0 && (
+            <div className="mt-5 flex flex-wrap gap-1.5">
+              {project.techStack.map((t) => (
+                <span key={t} className="chip">
+                  {t}
+                </span>
+              ))}
+            </div>
+          )}
+          <div className="mt-6 flex flex-wrap gap-3">
+            {project.link && (
+              <a
+                href={project.link}
+                className="btn-primary"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Visit live <ExternalLink className="h-3.5 w-3.5" />
+              </a>
+            )}
+            {project.repoUrl && (
+              <a
+                href={project.repoUrl}
+                className="btn-outline"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Github className="h-4 w-4" />
+                Repository
+              </a>
+            )}
+          </div>
         </div>
-      )}
-      <div className="prose-blog mt-8 whitespace-pre-line">{project.description}</div>
-      <div className="mt-8 flex flex-wrap gap-3">
-        {project.link && (
-          <a href={project.link} className="btn-primary" target="_blank" rel="noreferrer">
-            Live →
-          </a>
+      </section>
+
+      <section className="container-page py-16">
+        {project.imageUrl && (
+          <div className="surface mb-10 overflow-hidden p-0">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={project.imageUrl}
+              alt={project.title}
+              className="w-full object-cover"
+            />
+          </div>
         )}
-        {project.repoUrl && (
-          <a href={project.repoUrl} className="btn-outline" target="_blank" rel="noreferrer">
-            Repository
-          </a>
-        )}
-      </div>
-    </article>
+        <article className="prose-blog max-w-3xl whitespace-pre-line">
+          {project.description}
+        </article>
+      </section>
+    </>
   );
 }
