@@ -14,4 +14,20 @@ if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma;
 }
 
-export * from '@prisma/client';
+// Re-export enums (runtime values) and types from the generated client.
+export { Prisma, Role, PostStatus, OrderStatus } from '@prisma/client';
+export type {
+  User,
+  Profile,
+  Qualification,
+  Experience,
+  Skill,
+  Project,
+  Product,
+  Order,
+  OrderItem,
+  BlogPost,
+  Category,
+  Message,
+  AnalyticsEvent,
+} from '@prisma/client';
