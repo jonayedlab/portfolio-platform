@@ -8,6 +8,13 @@ export const ordersRouter = Router();
 
 const checkoutSchema = z.object({
   email: z.string().email(),
+  // WhatsApp number or other contact phone. Required at the API layer so we
+  // always have a way to follow up about the order outside email.
+  customerPhone: z
+    .string()
+    .trim()
+    .min(5, 'Phone / WhatsApp number is required')
+    .max(40, 'Phone / WhatsApp number is too long'),
   items: z
     .array(
       z.object({
@@ -22,7 +29,7 @@ const checkoutSchema = z.object({
 // A real payment gateway (Stripe) would update status via webhook to PAID.
 ordersRouter.post('/checkout', async (req, res, next) => {
   try {
-    const { email, items } = checkoutSchema.parse(req.body);
+    const { email, customerPhone, items } = checkoutSchema.parse(req.body);
     const products = await prisma.product.findMany({
       where: { id: { in: items.map((i) => i.productId) }, published: true },
     });
@@ -40,6 +47,7 @@ ordersRouter.post('/checkout', async (req, res, next) => {
     const order = await prisma.order.create({
       data: {
         email,
+        customerPhone,
         totalCents: total,
         status: OrderStatus.PENDING,
         items: {

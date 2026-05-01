@@ -16,6 +16,7 @@ import { ordersRouter } from './routes/orders.js';
 import { messagesRouter } from './routes/messages.js';
 import { uploadRouter } from './routes/upload.js';
 import { analyticsRouter } from './routes/analytics.js';
+import { productRequestsRouter } from './routes/productRequests.js';
 
 const app = express();
 
@@ -52,6 +53,7 @@ app.use('/api/orders', ordersRouter);
 app.use('/api/messages', messagesRouter);
 app.use('/api/upload', uploadRouter);
 app.use('/api/analytics', analyticsRouter);
+app.use('/api/product-requests', productRequestsRouter);
 
 app.use(notFound);
 app.use(errorHandler);

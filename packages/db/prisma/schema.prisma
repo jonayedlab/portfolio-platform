@@ -27,6 +27,14 @@ enum PostStatus {
   PUBLISHED
 }
 
+enum ProductRequestStatus {
+  NEW
+  IN_REVIEW
+  ACCEPTED
+  REJECTED
+  DONE
+}
+
 model User {
   id           String   @id @default(cuid())
   email        String   @unique
@@ -140,16 +148,19 @@ model Product {
 }
 
 model Order {
-  id         String      @id @default(cuid())
-  userId     String?
-  user       User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
-  email      String
-  totalCents Int
-  currency   String      @default("USD")
-  status     OrderStatus @default(PENDING)
-  items      OrderItem[]
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  id            String      @id @default(cuid())
+  userId        String?
+  user          User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  email         String
+  // WhatsApp number or other contact phone supplied by the buyer at checkout.
+  // Nullable in DB to keep historical orders importable; required at the API/UI layer.
+  customerPhone String?
+  totalCents    Int
+  currency      String      @default("USD")
+  status        OrderStatus @default(PENDING)
+  items         OrderItem[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 }
 
 model OrderItem {
@@ -193,6 +204,24 @@ model Message {
   body      String   @db.Text
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
+}
+
+// Anyone (no login) can submit a request describing a product / template / service
+// they would like the admin to build or list. Admins triage these from the panel.
+model ProductRequest {
+  id          String               @id @default(cuid())
+  name        String
+  email       String
+  phone       String               // WhatsApp number or other contact
+  title       String
+  description String               @db.Text
+  budget      String?              // Free-text budget (e.g. "$500", "Open to discuss")
+  status      ProductRequestStatus @default(NEW)
+  adminNote   String?              @db.Text
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  @@index([status, createdAt])
 }
 
 model AnalyticsEvent {
