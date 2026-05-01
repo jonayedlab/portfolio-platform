@@ -1,0 +1,28 @@
+{
+  "name": "portfolio-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Portfolio + digital marketplace + blog + admin CMS for Alifur Rahman Jonayed",
+  "packageManager": "pnpm@9.15.1",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "pnpm -r --parallel --filter \"./apps/*\" run dev",
+    "dev:web": "pnpm --filter @portfolio/web run dev",
+    "dev:api": "pnpm --filter @portfolio/api run dev",
+    "build": "pnpm -r --filter \"./apps/*\" --filter \"./packages/*\" run build",
+    "lint": "pnpm -r run lint",
+    "typecheck": "pnpm -r run typecheck",
+    "format": "prettier --write .",
+    "db:generate": "pnpm --filter @portfolio/db run generate",
+    "db:push": "pnpm --filter @portfolio/db run push",
+    "db:migrate": "pnpm --filter @portfolio/db run migrate",
+    "db:seed": "pnpm --filter @portfolio/db run seed",
+    "db:studio": "pnpm --filter @portfolio/db run studio"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.4"
+  }
+}
