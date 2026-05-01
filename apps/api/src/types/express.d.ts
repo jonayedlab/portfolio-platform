@@ -1,0 +1,12 @@
+import type { JwtPayload } from '../lib/jwt.js';
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace Express {
+    interface Request {
+      user?: JwtPayload;
+    }
+  }
+}
+
+export {};

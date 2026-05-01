@@ -1,12 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
-import { readAuthCookie, verifyToken, type JwtPayload } from '../lib/jwt.js';
+import { readAuthCookie, verifyToken } from '../lib/jwt.js';
 import { HttpError } from './error.js';
-
-declare module 'express-serve-static-core' {
-  interface Request {
-    user?: JwtPayload;
-  }
-}
 
 export function requireAuth(req: Request, _res: Response, next: NextFunction) {
   const token = readAuthCookie(req) ?? bearerToken(req);

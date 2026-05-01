@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { prisma } from '@portfolio/db';
+import { Prisma, prisma } from '@portfolio/db';
 import { requireAdmin, requireAuth } from '../middleware/auth.js';
 import { HttpError } from '../middleware/error.js';
 
@@ -37,11 +37,24 @@ const updateSchema = z.object({
 profileRouter.put('/', requireAuth, requireAdmin, async (req, res, next) => {
   try {
     if (!req.user) throw new HttpError(401, 'Unauthorized');
-    const data = updateSchema.parse(req.body);
+    const parsed = updateSchema.parse(req.body);
+    // Prisma requires `Prisma.JsonNull` to set a JSON column to null.
+    const { socials, ...rest } = parsed;
+    const data = {
+      ...rest,
+      socials:
+        socials === undefined
+          ? undefined
+          : socials === null
+            ? Prisma.JsonNull
+            : (socials as Prisma.InputJsonValue),
+    };
     const existing = await prisma.profile.findUnique({ where: { userId: req.user.sub } });
     const profile = existing
       ? await prisma.profile.update({ where: { id: existing.id }, data })
-      : await prisma.profile.create({ data: { ...data, userId: req.user.sub } });
+      : await prisma.profile.create({
+          data: { ...data, displayName: rest.displayName, user: { connect: { id: req.user.sub } } },
+        });
     res.json({ profile });
   } catch (err) {
     next(err);
