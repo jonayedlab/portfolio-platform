@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { apiFetch } from '@/lib/api';
+import { CheckCircle2, ShoppingBag } from 'lucide-react';
 
 export default function BuyButton({ productId }: { productId: string }) {
   const [email, setEmail] = useState('');
@@ -33,21 +34,35 @@ export default function BuyButton({ productId }: { productId: string }) {
 
   if (orderId) {
     return (
-      <div className="card border-green-500">
-        <p className="font-medium">Order placed (id: <code className="font-mono">{orderId}</code>).</p>
-        <p className="text-sm mt-2 text-[hsl(var(--muted-foreground))]">
-          This MVP marks orders as <strong>PENDING</strong>. We&apos;ll reach out on the email or
-          WhatsApp/contact number you provided to coordinate delivery. Connect a payment gateway
-          (e.g. Stripe) to mark them PAID and unlock the digital download automatically.
+      <div className="surface p-6">
+        <span className="grid h-10 w-10 place-items-center rounded-2xl bg-emerald-500/15 text-emerald-600 ring-1 ring-emerald-500/30">
+          <CheckCircle2 className="h-5 w-5" />
+        </span>
+        <p className="display-heading mt-4 text-lg">Order placed</p>
+        <p className="mt-1 text-sm text-[hsl(var(--muted-foreground))]">
+          Reference{' '}
+          <code className="rounded bg-[hsl(var(--muted))] px-1.5 py-0.5 font-mono text-xs">
+            {orderId}
+          </code>
+          . We&apos;ll reach out on the email or WhatsApp/contact number you provided to
+          coordinate delivery.
         </p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleBuy} className="space-y-3 max-w-md">
+    <form onSubmit={handleBuy} className="surface space-y-4 p-6">
       <div>
-        <label className="label" htmlFor="checkout-email">Your email</label>
+        <h3 className="display-heading text-lg">Checkout</h3>
+        <p className="mt-1 text-sm text-[hsl(var(--muted-foreground))]">
+          Enter your details and I&apos;ll follow up to confirm the order.
+        </p>
+      </div>
+      <div>
+        <label className="label" htmlFor="checkout-email">
+          Your email
+        </label>
         <input
           id="checkout-email"
           type="email"
@@ -59,7 +74,9 @@ export default function BuyButton({ productId }: { productId: string }) {
         />
       </div>
       <div>
-        <label className="label" htmlFor="checkout-phone">WhatsApp / contact number</label>
+        <label className="label" htmlFor="checkout-phone">
+          WhatsApp / contact number
+        </label>
         <input
           id="checkout-phone"
           type="tel"
@@ -72,11 +89,12 @@ export default function BuyButton({ productId }: { productId: string }) {
           placeholder="+880 1XXX-XXXXXX"
           className="input"
         />
-        <p className="text-xs text-[hsl(var(--muted-foreground))] mt-1">
-          We use this to follow up about your order. Include the country code.
+        <p className="mt-1.5 text-xs text-[hsl(var(--muted-foreground))]">
+          Include the country code so we can reach you.
         </p>
       </div>
-      <button type="submit" className="btn-primary" disabled={loading}>
+      <button type="submit" className="btn-primary w-full" disabled={loading}>
+        <ShoppingBag className="h-4 w-4" />
         {loading ? 'Processing…' : 'Buy now'}
       </button>
       {error && <p className="text-sm text-red-600">{error}</p>}
